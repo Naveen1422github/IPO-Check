@@ -266,7 +266,11 @@ def main():
         if 'GMP Data' in details:
             gmp_data = details['GMP Data']
             st.subheader("Top 5 GMP Data")
-            st.write(gmp_data.head(5))
+            # st.write(gmp_data.head(5))
+          
+            gmp_data_filtered = gmp_data.iloc[:, [0, 1, 4]]
+            gmp_data_filtered.columns = ['GMP Date', 'IPO Price', 'GMP Score']  # Rename columns for clarity (optional)
+            st.write(gmp_data_filtered.head(5).to_html(index=False), unsafe_allow_html=True)
 
         # Filter and display retail shares offered
         if 'Retail Shares Offered' in details:
@@ -278,16 +282,18 @@ def main():
           # Display subscription data for Retail Individual
         if 'Subscription Data' in details:
             subscription_data = details['Subscription Data']
-            retail_subscription = subscription_data[subscription_data['Investor Category'].str.contains("Retail Individual", na=False)]
-            st.subheader("Retail Individual Subscription Data")
-            st.write(retail_subscription)
+            if 'Investor Category' in subscription_data.columns:
+                retail_subscription = subscription_data[subscription_data['Investor Category'].str.contains("Retail Individual", na=False)]
+                st.subheader("Retail Individual Subscription Data")
+                st.write(retail_subscription)
 
         # Filter and display basis of allotment and listing date
         if 'Basis of Allotment' in details:
             basis = details['Basis of Allotment']
-            filtered_basis = basis[basis[0].isin(['Basis of Allotment', 'Listing Date'])]
-            st.subheader("Basis of Allotment and Listing Date")
-            st.write(filtered_basis)
+            if 'Investor Category' in subscription_data.columns:
+                filtered_basis = basis[basis[0].isin(['Basis of Allotment', 'Listing Date'])]
+                st.subheader("Basis of Allotment and Listing Date")
+                st.write(filtered_basis)
 
 
 if __name__ == "__main__":
